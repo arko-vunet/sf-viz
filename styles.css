@@ -1,0 +1,51 @@
+#chart {
+    max-width: 650px;
+    margin: 35px auto;
+}
+
+/* Full-height responsive column grid via background stripes */
+.grid-ctr {
+    min-height: 100vh;
+    /* default: phones (4 columns) */
+    --cols: 4;
+    --gutter: 16px;
+    /* exact column width after subtracting gutters */
+    --col: calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols));
+    background-color: #f8fafc;
+    /* outer gutters equal to interior gutter */
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
+    background-origin: content-box;
+    background-clip: content-box;
+    /* columns with 16px gutter; last column filled to exact --col width */
+    background-image:
+        linear-gradient(to right,
+            #e0f2fe 0,
+            #e0f2fe calc(100% - var(--gutter)),
+            transparent calc(100% - var(--gutter)),
+            transparent 100%),
+        linear-gradient(to right, #e0f2fe, #e0f2fe);
+    background-size:
+        calc(var(--col) + var(--gutter)) 100%,
+        var(--col) 100%;
+    background-position:
+        left top,
+        right top;
+    background-repeat:
+        repeat,
+        no-repeat;
+}
+
+/* tablets: 8 columns */
+@media (min-width: 768px) {
+    .grid-ctr {
+        --cols: 8;
+    }
+}
+
+/* laptops/desktops: 12 columns */
+@media (min-width: 1024px) {
+    .grid-ctr {
+        --cols: 12;
+    }
+}
