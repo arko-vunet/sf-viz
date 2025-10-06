@@ -11,20 +11,30 @@
     --gutter: 16px;
     /* exact column width after subtracting gutters */
     --col: calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols));
-    background-color: #f8fafc;
+    background-color: #fff;
     /* outer gutters equal to interior gutter */
     padding-left: var(--gutter);
     padding-right: var(--gutter);
+    /* real grid for layout */
+    display: grid;
+    /* match layout tracks exactly to your column math */
+    grid-template-columns: repeat(var(--cols), var(--col));
+    gap: var(--gutter);
+    /* prevent rows/items from stretching to fill viewport height */
+    align-content: start;
+    align-items: start;
+    grid-auto-rows: max-content;
+    /* visible column stripes aligned with grid */
     background-origin: content-box;
     background-clip: content-box;
-    /* columns with 16px gutter; last column filled to exact --col width */
     background-image:
         linear-gradient(to right,
-            #e0f2fe 0,
-            #e0f2fe calc(100% - var(--gutter)),
+            #e9f5fd 0,
+            #e9f5fd calc(100% - var(--gutter)),
             transparent calc(100% - var(--gutter)),
             transparent 100%),
-        linear-gradient(to right, #e0f2fe, #e0f2fe);
+        linear-gradient(to right, #e9f5fd, #e9f5fd);
+    /* stripe sizing mirrors --col + --gutter precisely */
     background-size:
         calc(var(--col) + var(--gutter)) 100%,
         var(--col) 100%;
