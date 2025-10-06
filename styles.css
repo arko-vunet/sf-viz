@@ -5,7 +5,7 @@
 
 /* Full-height responsive column grid via background stripes */
 .grid-ctr {
-    min-height: 100vh;
+    min-height: 100svh;
     /* default: phones (4 columns) */
     --cols: 4;
     --gutter: 16px;
