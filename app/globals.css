@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-ibm-plex-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  font-family: var(--font-sans);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+
+/* Full-height responsive column grid via background stripes */
+.grid-ctr {
+  min-height: 100svh;
+  /* default: phones (4 columns) */
+  --cols: 4;
+  --gutter: 16px;
+  /* exact column width after subtracting gutters */
+  --col: calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols));
+  background-color: #fff;
+  position: relative;
+  /* outer gutters equal to interior gutter */
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+  /* vertical breathing room for content */
+  padding-top: var(--gutter);
+  padding-bottom: var(--gutter);
+  /* real grid for layout */
+  display: grid;
+  /* match layout tracks exactly to your column math */
+  grid-template-columns: repeat(var(--cols), var(--col));
+  gap: var(--gutter);
+  /* prevent rows/items from stretching to fill viewport height */
+  align-content: start;
+  align-items: start;
+  grid-auto-rows: max-content;
+}
+
+/* full-height column stripes, inset horizontally by gutters */
+.grid-ctr::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--gutter);
+  right: var(--gutter);
+  background-image:
+    linear-gradient(to right,
+      rgba(233, 245, 253, 0.35) 0,
+      rgba(233, 245, 253, 0.35) calc(100% - var(--gutter)),
+      transparent calc(100% - var(--gutter)),
+      transparent 100%),
+    linear-gradient(to right, rgba(233, 245, 253, 0.35), rgba(233, 245, 253, 0.35));
+  background-size:
+    calc(var(--col) + var(--gutter)) 100%,
+    var(--col) 100%;
+  background-position:
+    left top,
+    right top;
+  background-repeat:
+    repeat,
+    no-repeat;
+  pointer-events: none;
+}
+
+/* tablets: 8 columns */
+@media (min-width: 768px) {
+  .grid-ctr {
+    --cols: 8;
+  }
+}
+
+/* laptops/desktops: 12 columns */
+@media (min-width: 1024px) {
+  .grid-ctr {
+    --cols: 12;
+  }
+}
+
+/* Hide only the box-zoom icon; keep zoom-by-drag enabled */
+/* .apexcharts-toolbar .apexcharts-zoom-icon {
+  display: none !important;
+} */
+
+/* Position anywhere via CSS (e.g., bottom-left) */
+/* .apexcharts-toolbar {
+  top: auto !important;
+  right: auto !important;
+  bottom: 10px !important;
+  left: 10px !important;
+} */
+
+/* spacing */
+.apexcharts-toolbar {
+  display: flex;
+  gap: 0px;
+  flex-wrap: nowrap;
+  --separator-gap: 18px;
+}
+
+/* normalize icon margins to avoid unexpected spacing from library defaults */
+.apexcharts-toolbar .apexcharts-zoom-icon,
+.apexcharts-toolbar .apexcharts-pan-icon,
+.apexcharts-toolbar .apexcharts-zoomin-icon,
+.apexcharts-toolbar .apexcharts-zoomout-icon,
+.apexcharts-toolbar .apexcharts-reset-icon {
+  margin: 0;
+}
+
+/* Put Selection and Pan before Zoom In/Out */
+.apexcharts-toolbar .apexcharts-zoom-icon {
+  order: 0;
+}
+
+/* Selection Zoom */
+.apexcharts-toolbar .apexcharts-pan-icon {
+  order: 1;
+}
+
+.apexcharts-toolbar .separator {
+  order: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--separator-gap);
+  margin-left: 4px;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.apexcharts-toolbar .apexcharts-zoomin-icon {
+  order: 3;
+}
+
+.apexcharts-toolbar .apexcharts-zoomout-icon {
+  order: 4;
+}
+
+.apexcharts-toolbar .apexcharts-reset-icon {
+  order: 5;
+  margin-left: 0px;
+}

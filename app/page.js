@@ -1,0 +1,121 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
+export default function Home() {
+  const columnRef = useRef(null);
+  const lineRef = useRef(null);
+  const multiLineRef = useRef(null);
+
+  useEffect(() => {
+    let columnChart;
+    let lineChart;
+    let multiLineChart;
+
+    const init = async () => {
+      const ApexCharts = (await import("apexcharts")).default;
+
+      const toolbarSeparator = [
+        {
+          icon: '<span aria-hidden="true">•</span>',
+          index: 2,
+          title: "separator",
+          class: "separator",
+          click: function () { },
+        },
+      ];
+
+      const baseChart = {
+        chart: {
+          fontFamily: "IBM Plex Sans, sans-serif",
+          toolbar: {
+            show: true,
+            tools: { download: false, customIcons: toolbarSeparator },
+            autoSelected: "zoom",
+          },
+          zoom: { enabled: true, type: "x", autoScaleYaxis: true },
+        },
+        legend: { fontFamily: "IBM Plex Sans, sans-serif" },
+        xaxis: {
+          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
+          labels: { style: { fontFamily: "IBM Plex Sans, sans-serif" } },
+        },
+        yaxis: { labels: { style: { fontFamily: "IBM Plex Sans, sans-serif" } } },
+        dataLabels: { style: { fontFamily: "IBM Plex Sans, sans-serif" } },
+      };
+
+      if (columnRef.current) {
+        const options = {
+          ...baseChart,
+          chart: { ...baseChart.chart, type: "bar" },
+          series: [
+            {
+              name: "sales",
+              data: [30, 40, 45, 50, 49, 60, 70, 91, 125],
+            },
+          ],
+        };
+        columnChart = new ApexCharts(columnRef.current, options);
+        columnChart.render();
+      }
+
+      if (lineRef.current) {
+        const lineOptions = {
+          ...baseChart,
+          chart: { ...baseChart.chart, type: "line" },
+          series: [
+            {
+              name: "revenue",
+              data: [20, 35, 30, 55, 52, 65, 80, 95, 130],
+            },
+          ],
+          dataLabels: { enabled: false, style: baseChart.dataLabels.style },
+          stroke: { curve: "smooth", width: 3 },
+        };
+        lineChart = new ApexCharts(lineRef.current, lineOptions);
+        lineChart.render();
+      }
+
+      if (multiLineRef.current) {
+        const multiLineOptions = {
+          ...baseChart,
+          chart: { ...baseChart.chart, type: "line" },
+          series: [
+            { name: "North", data: [20, 34, 31, 52, 42, 67, 78, 90, 120] },
+            { name: "South", data: [15, 25, 28, 40, 38, 55, 65, 85, 110] },
+            { name: "West", data: [10, 20, 26, 35, 34, 45, 58, 72, 95] },
+          ],
+          dataLabels: { enabled: false, style: baseChart.dataLabels.style },
+          stroke: { curve: "smooth", width: 3 },
+        };
+        multiLineChart = new ApexCharts(
+          multiLineRef.current,
+          multiLineOptions
+        );
+        multiLineChart.render();
+      }
+    };
+
+    init();
+
+    return () => {
+      if (columnChart) columnChart.destroy();
+      if (lineChart) lineChart.destroy();
+      if (multiLineChart) multiLineChart.destroy();
+    };
+  }, []);
+
+  return (
+    <div className="grid-ctr">
+      <div className="col-span-4 p-2 rounded-md shadow-sm/3 bg-white border border-gray-300">
+        <div ref={columnRef} />
+      </div>
+      <div className="col-span-4 p-2 rounded-md shadow-sm/3 bg-white border border-gray-300">
+        <div ref={lineRef} />
+      </div>
+      <div className="col-span-4 p-2 rounded-md shadow-sm/3 bg-white border border-gray-300">
+        <div ref={multiLineRef} />
+      </div>
+    </div>
+  );
+}
