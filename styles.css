@@ -101,3 +101,69 @@ html {
         --cols: 12;
     }
 }
+
+/* Hide only the box-zoom icon; keep zoom-by-drag enabled */
+/* .apexcharts-toolbar .apexcharts-zoom-icon {
+    display: none !important;
+} */
+
+/* Position anywhere via CSS (e.g., bottom-left) */
+/* .apexcharts-toolbar {
+    top: auto !important;
+    right: auto !important;
+    bottom: 10px !important;
+    left: 10px !important;
+} */
+
+/* spacing */
+.apexcharts-toolbar {
+    display: flex;
+    gap: 0px;
+    flex-wrap: nowrap;
+    --separator-gap: 18px;
+}
+
+/* normalize icon margins to avoid unexpected spacing from library defaults */
+.apexcharts-toolbar .apexcharts-zoom-icon,
+.apexcharts-toolbar .apexcharts-pan-icon,
+.apexcharts-toolbar .apexcharts-zoomin-icon,
+.apexcharts-toolbar .apexcharts-zoomout-icon,
+.apexcharts-toolbar .apexcharts-reset-icon {
+    margin: 0;
+}
+
+/* Put Selection and Pan before Zoom In/Out */
+.apexcharts-toolbar .apexcharts-zoom-icon {
+    order: 0;
+}
+
+/* Selection Zoom */
+.apexcharts-toolbar .apexcharts-pan-icon {
+    order: 1;
+}
+
+.apexcharts-toolbar .separator {
+    order: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--separator-gap);
+    margin-left: 4px;
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.apexcharts-toolbar .apexcharts-zoomin-icon {
+    order: 3;
+}
+
+.apexcharts-toolbar .apexcharts-zoomout-icon {
+    order: 4;
+}
+
+.apexcharts-toolbar .apexcharts-reset-icon {
+    order: 5;
+    margin-left: 0px;
+}
+
+/* remove pseudo separator approach */

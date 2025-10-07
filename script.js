@@ -1,7 +1,18 @@
+// shared custom toolbar separator icon
+var toolbarSeparator = [{
+    icon: '<span aria-hidden="true">•</span>',
+    index: 2,
+    title: 'separator',
+    class: 'separator',
+    click: function () { /* no-op */ }
+}];
+
 var options = {
     chart: {
         type: 'bar',
-        fontFamily: 'IBM Plex Sans, sans-serif'
+        fontFamily: 'IBM Plex Sans, sans-serif',
+        toolbar: { show: true, tools: { download: false, customIcons: toolbarSeparator }, autoSelected: 'zoom' },
+        zoom: { enabled: true, type: 'x', autoScaleYaxis: true }
     },
     legend: {
         fontFamily: 'IBM Plex Sans, sans-serif'
@@ -32,7 +43,9 @@ if (chartMount) {
 var lineOptions = {
     chart: {
         type: 'line',
-        fontFamily: 'IBM Plex Sans, sans-serif'
+        fontFamily: 'IBM Plex Sans, sans-serif',
+        toolbar: { show: true, tools: { download: false, customIcons: toolbarSeparator }, autoSelected: 'zoom' },
+        zoom: { enabled: true, type: 'x', autoScaleYaxis: true }
     },
     legend: {
         fontFamily: 'IBM Plex Sans, sans-serif'
@@ -68,7 +81,9 @@ if (lineMount) {
 var multiLineOptions = {
     chart: {
         type: 'line',
-        fontFamily: 'IBM Plex Sans, sans-serif'
+        fontFamily: 'IBM Plex Sans, sans-serif',
+        toolbar: { show: true, tools: { download: false, customIcons: toolbarSeparator }, autoSelected: 'zoom' },
+        zoom: { enabled: true, type: 'x', autoScaleYaxis: true }
     },
     legend: {
         fontFamily: 'IBM Plex Sans, sans-serif'
