@@ -1,13 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Info, SquareArrowOutUpRight } from "lucide-react";
+import Panel from "@/components/Panel";
 import TableWidget from "@/components/TableWidget";
 
 export default function Home() {
@@ -122,90 +116,32 @@ export default function Home() {
           externalHref="https://tanstack.com/table/latest"
         />
       </div>
-      <div className="widget col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
-        <div className="flex flex-row gap-2 pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between">
-          <div className="flex flex-row gap-0.5 items-center">
-            <div className="text-sm font-semibold truncate">Widget Title</div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon-sm" className="cursor-pointer">
-                  <Info />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>A description of the widget; can be fairly long, wrapping to multiple lines, if needed.</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon-sm" className="cursor-pointer text-blue-600 hover:text-blue-900">
-                <SquareArrowOutUpRight />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>External link</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
+      <Panel
+        className="col-span-4"
+        title="Widget Title"
+        description="A description of the widget; can be fairly long, wrapping to multiple lines, if needed."
+        externalHref="https://example.com"
+      >
         <div ref={columnRef} />
-      </div>
-      <div className="widget col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
-        <div className="flex flex-row gap-2 h-[37px] pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between">
-          <div className="flex flex-row gap-0.5 items-center">
-            <div className="text-sm font-semibold truncate">A Widget Title that&apos;s a bit longer</div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon-sm" className="cursor-pointer">
-                  <Info />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>A description of the widget; can be fairly long, wrapping to multiple lines, if needed.</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon-sm" className="cursor-pointer text-blue-600 hover:text-blue-900">
-                <SquareArrowOutUpRight />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>External link</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
+      </Panel>
+      <Panel
+        className="col-span-4"
+        title="A Widget Title that's a bit longer"
+        description="A description of the widget; can be fairly long, wrapping to multiple lines, if needed."
+        externalHref="https://example.com"
+        headerHeightClass="h-[37px]"
+      >
         <div ref={lineRef} />
-      </div>
-      <div className="widget col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
-        <div className="flex flex-row gap-2 h-[37px] pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between">
-          <div className="flex flex-row gap-0.5 items-center">
-            <div className="text-sm font-semibold truncate">Widget Title</div>
-            {/* <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon-sm" className="cursor-pointer">
-                  <Info />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>A description of the widget; can be fairly long, wrapping to multiple lines, if needed.</p>
-              </TooltipContent>
-            </Tooltip> */}
-          </div>
-          {/* <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon-sm" className="cursor-pointer text-blue-600 hover:text-blue-900">
-                <SquareArrowOutUpRight />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>External link</p>
-            </TooltipContent>
-          </Tooltip> */}
-        </div>
+      </Panel>
+      <Panel
+        className="col-span-4"
+        title="Widget Title"
+        showDescription={false}
+        showExternalLink={false}
+        headerHeightClass="h-[37px]"
+      >
         <div ref={multiLineRef} />
-      </div>
+      </Panel>
     </div>
   );
 }

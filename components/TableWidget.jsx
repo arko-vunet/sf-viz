@@ -7,9 +7,7 @@ import {
     flexRender,
     createColumnHelper,
 } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info, SquareArrowOutUpRight } from "lucide-react";
+import Panel from "@/components/Panel";
 
 const columnHelper = createColumnHelper();
 
@@ -49,41 +47,7 @@ export default function TableWidget({
     });
 
     return (
-        <div className="widget rounded-md shadow-sm/3 bg-white border border-gray-300">
-            <div className="flex flex-row gap-2 h-[37px] pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between">
-                <div className="flex flex-row gap-0.5 items-center min-w-0">
-                    <div className="text-sm font-semibold truncate">{title}</div>
-                    {description ? (
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon-sm" className="cursor-pointer">
-                                    <Info />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>{description}</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    ) : null}
-                </div>
-                {externalHref ? (
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <a href={externalHref} target="_blank" rel="noreferrer">
-                                <Button variant="ghost" size="icon-sm" className="cursor-pointer text-blue-600 hover:text-blue-900">
-                                    <SquareArrowOutUpRight />
-                                </Button>
-                            </a>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>External link</p>
-                        </TooltipContent>
-                    </Tooltip>
-                ) : (
-                    <div />
-                )}
-            </div>
-
+        <Panel title={title} description={description} externalHref={externalHref} headerHeightClass="h-[37px]">
             <div className="overflow-x-auto p-2">
                 <table className="w-full text-sm">
                     <thead>
@@ -110,7 +74,7 @@ export default function TableWidget({
                     </tbody>
                 </table>
             </div>
-        </div>
+        </Panel>
     );
 }
 
