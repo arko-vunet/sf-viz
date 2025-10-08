@@ -103,6 +103,17 @@ html {
   gap: 0px;
   flex-wrap: nowrap;
   --separator-gap: 18px;
+  position: absolute;
+  top: 3px !important;
+}
+
+/* Hide toolbar unless hovering the widget panel */
+.apexcharts-toolbar { opacity: 0; pointer-events: none; transition: opacity 120ms ease-in-out; }
+.widget:hover .apexcharts-toolbar { opacity: 1; pointer-events: auto; }
+
+/* On touch devices (no hover), keep toolbar visible */
+@media (hover: none), (any-hover: none) {
+  .apexcharts-toolbar { opacity: 1; pointer-events: auto; }
 }
 
 /* normalize icon margins to avoid unexpected spacing from library defaults */

@@ -114,7 +114,7 @@ export default function Home() {
 
   return (
     <div className="grid-ctr font-sans">
-      <div className="col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
+      <div className="widget col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
         <div className="flex flex-row gap-2 pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between">
           <div className="flex flex-row gap-0.5 items-center">
             <div className="text-sm font-semibold truncate">Widget Title</div>
@@ -142,10 +142,10 @@ export default function Home() {
         </div>
         <div ref={columnRef} />
       </div>
-      <div className="col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
+      <div className="widget col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
         <div className="flex flex-row gap-2 h-[37px] pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between">
           <div className="flex flex-row gap-0.5 items-center">
-            <div className="text-sm font-semibold truncate">A Widget Title that's a bit longer</div>
+            <div className="text-sm font-semibold truncate">A Widget Title that&apos;s a bit longer</div>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon-sm" className="cursor-pointer">
@@ -170,7 +170,7 @@ export default function Home() {
         </div>
         <div ref={lineRef} />
       </div>
-      <div className="col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
+      <div className="widget col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
         <div className="flex flex-row gap-2 h-[37px] pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between">
           <div className="flex flex-row gap-0.5 items-center">
             <div className="text-sm font-semibold truncate">Widget Title</div>
