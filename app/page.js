@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Info, SquareArrowOutUpRight } from "lucide-react";
+import TableWidget from "@/components/TableWidget";
 
 export default function Home() {
   const columnRef = useRef(null);
@@ -114,6 +115,13 @@ export default function Home() {
 
   return (
     <div className="grid-ctr font-sans">
+      <div className="col-span-4 lg:col-span-6">
+        <TableWidget
+          title="Users"
+          description="Example table powered by TanStack React Table."
+          externalHref="https://tanstack.com/table/latest"
+        />
+      </div>
       <div className="widget col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
         <div className="flex flex-row gap-2 pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between">
           <div className="flex flex-row gap-0.5 items-center">
