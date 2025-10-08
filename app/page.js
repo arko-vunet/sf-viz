@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Info, SquareArrowOutUpRight } from "lucide-react";
 
 export default function Home() {
   const columnRef = useRef(null);
@@ -106,14 +113,89 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="grid-ctr">
-      <div className="col-span-4 p-2 rounded-md shadow-sm/3 bg-white border border-gray-300">
+    <div className="grid-ctr font-sans">
+      <div className="col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
+        <div className="flex flex-row gap-2 pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between">
+          <div className="flex flex-row gap-0.5 items-center">
+            <div className="text-sm font-semibold truncate">Widget Title</div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon-sm" className="cursor-pointer">
+                  <Info />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>A description of the widget; can be fairly long, wrapping to multiple lines, if needed.</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon-sm" className="cursor-pointer text-blue-600 hover:text-blue-900">
+                <SquareArrowOutUpRight />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>External link</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
         <div ref={columnRef} />
       </div>
-      <div className="col-span-4 p-2 rounded-md shadow-sm/3 bg-white border border-gray-300">
+      <div className="col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
+        <div className="flex flex-row gap-2 h-[37px] pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between">
+          <div className="flex flex-row gap-0.5 items-center">
+            <div className="text-sm font-semibold truncate">A Widget Title that's a bit longer</div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon-sm" className="cursor-pointer">
+                  <Info />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>A description of the widget; can be fairly long, wrapping to multiple lines, if needed.</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon-sm" className="cursor-pointer text-blue-600 hover:text-blue-900">
+                <SquareArrowOutUpRight />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>External link</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
         <div ref={lineRef} />
       </div>
-      <div className="col-span-4 p-2 rounded-md shadow-sm/3 bg-white border border-gray-300">
+      <div className="col-span-4 rounded-md shadow-sm/3 bg-white border border-gray-300">
+        <div className="flex flex-row gap-2 h-[37px] pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between">
+          <div className="flex flex-row gap-0.5 items-center">
+            <div className="text-sm font-semibold truncate">Widget Title</div>
+            {/* <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon-sm" className="cursor-pointer">
+                  <Info />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>A description of the widget; can be fairly long, wrapping to multiple lines, if needed.</p>
+              </TooltipContent>
+            </Tooltip> */}
+          </div>
+          {/* <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon-sm" className="cursor-pointer text-blue-600 hover:text-blue-900">
+                <SquareArrowOutUpRight />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>External link</p>
+            </TooltipContent>
+          </Tooltip> */}
+        </div>
         <div ref={multiLineRef} />
       </div>
     </div>

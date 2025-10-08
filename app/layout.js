@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${ibmPlexSans.variable} antialiased`}
+        className={`${ibmPlexSans.className} ${ibmPlexSans.variable} antialiased`}
       >
         {children}
       </body>
