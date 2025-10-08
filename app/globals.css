@@ -39,7 +39,7 @@ html {
   gap: var(--gutter);
   /* prevent rows/items from stretching to fill viewport height */
   align-content: start;
-  align-items: start;
+  align-items: stretch;
   grid-auto-rows: max-content;
 }
 

@@ -6,12 +6,14 @@ import TableWidget from "@/components/TableWidget";
 
 export default function Home() {
   const columnRef = useRef(null);
+  const pieRef = useRef(null);
   const lineRef = useRef(null);
   const multiLineRef = useRef(null);
 
   useEffect(() => {
     let columnChart;
     let lineChart;
+    let pieChart;
     let multiLineChart;
 
     const init = async () => {
@@ -30,6 +32,7 @@ export default function Home() {
       const baseChart = {
         chart: {
           fontFamily: "IBM Plex Sans, sans-serif",
+          height: "100%",
           toolbar: {
             show: true,
             tools: { download: false, customIcons: toolbarSeparator },
@@ -59,6 +62,19 @@ export default function Home() {
         };
         columnChart = new ApexCharts(columnRef.current, options);
         columnChart.render();
+      }
+
+      if (pieRef.current) {
+        const pieOptions = {
+          ...baseChart,
+          chart: { ...baseChart.chart, type: "pie" },
+          labels: ["North", "South", "West", "East"],
+          series: [44, 33, 21, 12],
+          legend: { position: "bottom", fontFamily: baseChart.legend.fontFamily },
+          dataLabels: { enabled: true, style: baseChart.dataLabels.style },
+        };
+        pieChart = new ApexCharts(pieRef.current, pieOptions);
+        pieChart.render();
       }
 
       if (lineRef.current) {
@@ -103,6 +119,7 @@ export default function Home() {
     return () => {
       if (columnChart) columnChart.destroy();
       if (lineChart) lineChart.destroy();
+      if (pieChart) pieChart.destroy();
       if (multiLineChart) multiLineChart.destroy();
     };
   }, []);
@@ -122,7 +139,16 @@ export default function Home() {
         description="A description of the widget; can be fairly long, wrapping to multiple lines, if needed."
         externalHref="https://example.com"
       >
-        <div ref={columnRef} />
+        <div ref={columnRef} className="h-full" />
+      </Panel>
+      <Panel
+        className="col-span-2"
+        title="Regions Share"
+        description="Category breakdown as a pie chart."
+        showExternalLink={false}
+        headerHeightClass="h-[37px]"
+      >
+        <div ref={pieRef} className="h-full" />
       </Panel>
       <Panel
         className="col-span-4"
@@ -131,7 +157,7 @@ export default function Home() {
         externalHref="https://example.com"
         headerHeightClass="h-[37px]"
       >
-        <div ref={lineRef} />
+        <div ref={lineRef} className="h-full" />
       </Panel>
       <Panel
         className="col-span-4"
@@ -140,7 +166,7 @@ export default function Home() {
         showExternalLink={false}
         headerHeightClass="h-[37px]"
       >
-        <div ref={multiLineRef} />
+        <div ref={multiLineRef} className="h-full" />
       </Panel>
     </div>
   );
