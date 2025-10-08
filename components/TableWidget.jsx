@@ -213,7 +213,7 @@ export default function TableWidget({
                                     return (
                                         <th
                                             key={header.id}
-                                            className={`${isNumericHeader ? "text-right" : "text-left"} font-semibold whitespace-nowrap px-3 py-2 text-gray-700 sticky top-0 z-10 bg-white`}
+                                            className={`${isNumericHeader ? "text-right" : "text-left"} font-semibold whitespace-nowrap px-3 py-2 text-gray-700 sticky top-0 z-10 bg-gray-200`}
                                         >
                                             {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                         </th>
