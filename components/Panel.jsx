@@ -19,7 +19,7 @@ function Panel({
   titleClassName,
 }) {
   return (
-    <div className={cn("widget rounded-md shadow-sm/3 bg-white border border-gray-300", className)}>
+    <div className={cn("widget rounded-md shadow-sm/3 bg-white border border-gray-300 bg-white", className)}>
       <div className={cn("flex flex-row gap-2 pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between", headerHeightClass)}>
         <div className="flex flex-row gap-0.5 items-center min-w-0">
           {title ? (

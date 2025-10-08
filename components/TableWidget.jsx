@@ -203,7 +203,7 @@ export default function TableWidget({
 
     return (
         <Panel title={title} description={description} externalHref={externalHref} headerHeightClass="h-[37px]">
-            <div className="overflow-x-auto overflow-y-auto max-h-80 p-2">
+            <div className="overflow-x-auto overflow-y-auto max-h-80 p-2 pt-0">
                 <table className="w-full text-sm min-w-max">
                     <thead>
                         {table.getHeaderGroups().map(headerGroup => (
