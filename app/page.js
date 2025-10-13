@@ -8,6 +8,7 @@ export default function Home() {
   const columnRef = useRef(null);
   const pieRef = useRef(null);
   const lineRef = useRef(null);
+  const lineLabelsRef = useRef(null);
   const multiLineRef = useRef(null);
 
   useEffect(() => {
@@ -83,6 +84,7 @@ export default function Home() {
         const baseTime = Date.now() - (cpuData.length - 1) * 20000;
         const timestamps = Array.from({ length: cpuData.length }, (_, i) => baseTime + i * 20000);
         const dataPoints = cpuData.map((y, i) => ({ x: timestamps[i], y }));
+        const thresholdPoints = timestamps.map((t) => ({ x: t, y: threshold }));
 
         // Build breach points with dynamic label placement based on available space
         const categories = timestamps;
@@ -102,7 +104,8 @@ export default function Home() {
               const nearTop = yPxFromTop < toolbarAvoidPx + labelHeight;
               const nearBottom = yPxFromTop > gridHeight - (bottomAvoidPx + labelHeight);
 
-              const offsetY = nearTop ? 24 : nearBottom ? -18 : 24; // below by default
+              // Keep labels out of the line by rendering them above the chart in a separate layer
+              const offsetY = -9999; // effectively hide built-in label; we draw custom labels separately
 
               return {
                 x: categories[idx],
@@ -124,13 +127,16 @@ export default function Home() {
             .filter(Boolean);
         };
 
+        const DASH = 4; // single source of truth for dashes
+        const LINE_W = 1;
         const breachLines = cpuData
           .map((value, idx) => {
             if (value <= threshold) return null;
             return {
               x: timestamps[idx],
               borderColor: "#EF4444",
-              strokeDashArray: 4,
+              strokeDashArray: DASH,
+              borderWidth: LINE_W,
               opacity: 0.9,
             };
           })
@@ -158,6 +164,20 @@ export default function Home() {
           if (collideRight && !collideLeft) return { position: "left", offsetX: -10 };
           if (collideLeft && collideRight) return { position: "left", offsetX: -10 };
           return { position: "left", offsetX: -10 };
+        };
+
+        // Render external labels in a separate absolutely-positioned layer above the chart
+        const ensureExternalLabelLayer = () => {
+          if (!lineLabelsRef.current) return null;
+          const layer = lineLabelsRef.current;
+          return layer;
+        };
+
+        const renderExternalLabels = (chartCtx) => {
+          const layer = ensureExternalLabelLayer();
+          if (!layer) return;
+          // Do not render external breach labels; rely on hover tooltip instead
+          layer.innerHTML = "";
         };
 
         const lineOptions = {
@@ -189,6 +209,7 @@ export default function Home() {
                   },
                 ];
                 chartCtx.updateOptions({ annotations: { points: pts, yaxis: yAnn } }, false, true);
+                renderExternalLabels(chartCtx);
               },
               updated: (chartCtx) => {
                 const w = chartCtx.w;
@@ -213,6 +234,7 @@ export default function Home() {
                   },
                 ];
                 chartCtx.updateOptions({ annotations: { points: pts, yaxis: yAnn } }, false, true);
+                renderExternalLabels(chartCtx);
               },
               resized: (chartCtx) => {
                 const w = chartCtx.w;
@@ -237,6 +259,7 @@ export default function Home() {
                   },
                 ];
                 chartCtx.updateOptions({ annotations: { points: pts, yaxis: yAnn } }, false, true);
+                renderExternalLabels(chartCtx);
               },
               zoomed: (chartCtx) => {
                 const w = chartCtx.w;
@@ -261,6 +284,7 @@ export default function Home() {
                   },
                 ];
                 chartCtx.updateOptions({ annotations: { points: pts, yaxis: yAnn } }, false, true);
+                renderExternalLabels(chartCtx);
               },
               beforeResetZoom: (chartCtx) => {
                 const w = chartCtx.w;
@@ -285,6 +309,7 @@ export default function Home() {
                   },
                 ];
                 chartCtx.updateOptions({ annotations: { points: pts, yaxis: yAnn } }, false, true);
+                renderExternalLabels(chartCtx);
               },
             },
           },
@@ -293,9 +318,18 @@ export default function Home() {
               name: "CPU Utilization (%)",
               data: dataPoints,
             },
+            // Threshold dashed line is drawn via annotation for consistency; keep this series hidden
+            {
+              name: "Threshold",
+              data: thresholdPoints,
+            },
           ],
           dataLabels: { enabled: false, style: baseChart.dataLabels.style },
-          stroke: { curve: "smooth", width: 3 },
+          // Consistent dashed style across all helper lines
+          stroke: { curve: "smooth", width: [3, 1], dashArray: [0, 4] },
+          markers: { size: 0, hover: { size: 0 } },
+          colors: ["#3B82F6", "#F59E0B"],
+          legend: { markers: { fillColors: ["#3B82F6", "#F59E0B"] } },
           xaxis: {
             type: "datetime",
             labels: {
@@ -321,10 +355,12 @@ export default function Home() {
               {
                 y: threshold,
                 borderColor: "#F59E0B",
+                borderWidth: LINE_W,
+                strokeDashArray: DASH,
                 label: {
                   text: `${threshold}%`,
                   position: "left",
-                  offsetX: -10,
+                  offsetX: -12,
                   style: { background: "#F59E0B", color: "#ffffff" },
                 },
               },
@@ -406,7 +442,10 @@ export default function Home() {
         externalHref="https://example.com"
         headerHeightClass="h-[37px]"
       >
-        <div ref={lineRef} className="h-full" />
+        <div className="relative h-full">
+          <div ref={lineRef} className="h-full" />
+          <div ref={lineLabelsRef} className="pointer-events-none absolute inset-0" />
+        </div>
       </Panel>
       <Panel
         className="col-span-4"
