@@ -17,6 +17,7 @@ function Panel({
     actions,
     headerHeightClass = "h-[37px]",
     titleClassName,
+  contentClassName,
 }) {
     return (
         <div className={cn("widget rounded-md shadow-sm/3 bg-white border border-gray-300 bg-white flex flex-col", className)}>
@@ -62,7 +63,7 @@ function Panel({
                 </div>
             </div>
 
-            <div className="flex-1 min-h-0 p-2 pt-0">{children}</div>
+	  <div className={cn("flex-1 min-h-0 p-2 pt-0", contentClassName)}>{children}</div>
         </div>
     );
 }

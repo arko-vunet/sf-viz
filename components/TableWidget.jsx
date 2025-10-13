@@ -202,8 +202,8 @@ export default function TableWidget({
     });
 
     return (
-        <Panel className="h-full" title={title} description={description} externalHref={externalHref} headerHeightClass="h-[37px]">
-            <div className="overflow-x-auto overflow-y-auto max-h-80 pt-0">
+        <Panel className="h-full" title={title} description={description} externalHref={externalHref} headerHeightClass="h-[37px]" contentClassName="p-0">
+            <div className="overflow-x-auto overflow-y-auto max-h-80">
                 <table className="w-full text-sm min-w-max">
                     <thead>
                         {table.getHeaderGroups().map(headerGroup => (
