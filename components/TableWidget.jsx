@@ -1,13 +1,17 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
     useReactTable,
     getCoreRowModel,
+    getSortedRowModel,
     flexRender,
     createColumnHelper,
 } from "@tanstack/react-table";
 import Panel from "@/components/Panel";
+import { Button } from "@/components/ui/button";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow, ArrowUpDown, ArrowDownAZ, ArrowUpZA } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const columnHelper = createColumnHelper();
 
@@ -127,15 +131,14 @@ function StatusBadge({ status }) {
 const defaultColumns = [
     columnHelper.accessor("service", {
         header: () => "Service",
-        cell: info => (
-            <div className="flex flex-col">
-                <span className="font-medium">{info.getValue()}</span>
-                <span className="text-xs text-gray-500">{info.row.original.region}</span>
-            </div>
-        ),
+        cell: info => <span className="font-medium">{info.getValue()}</span>,
     }),
     columnHelper.accessor("host", {
         header: () => "Host",
+        cell: info => info.getValue(),
+    }),
+    columnHelper.accessor("region", {
+        header: () => "Region",
         cell: info => info.getValue(),
     }),
     columnHelper.accessor("status", {
@@ -195,10 +198,15 @@ export default function TableWidget({
     columns = defaultColumns,
     externalHref,
 }) {
+    const [sorting, setSorting] = useState([]);
+
     const table = useReactTable({
         data,
         columns,
+        state: { sorting },
+        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
     });
 
     return (
@@ -213,9 +221,49 @@ export default function TableWidget({
                                     return (
                                         <th
                                             key={header.id}
-                                            className={`${isNumericHeader ? "text-right" : "text-left"} font-semibold whitespace-nowrap px-3 py-2 text-gray-700 sticky top-0 z-10 bg-gray-200`}
+                                            className={`${isNumericHeader ? "text-right" : "text-left"} font-semibold whitespace-nowrap px-3 py-2 text-gray-700 sticky top-0 z-10 bg-gray-200 overflow-hidden`}
+                                            aria-sort={header.column.getIsSorted() === 'asc' ? 'ascending' : header.column.getIsSorted() === 'desc' ? 'descending' : 'none'}
                                         >
-                                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                            <div className={`relative group min-w-0 ${isNumericHeader ? "text-right" : "text-left"}`}>
+                                                <div className="truncate min-w-0 w-full max-w-full group-hover:max-w-[calc(100%-28px)]">
+                                                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                                </div>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button
+                                                            onClick={header.column.getToggleSortingHandler()}
+                                                            variant="ghost"
+                                                            size="icon-sm"
+                                                            aria-label="Sort"
+                                                            className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
+                                                        >
+                                                            {(function () {
+                                                                const sorted = header.column.getIsSorted();
+                                                                if (sorted === 'asc') {
+                                                                    return isNumericHeader ? <ArrowUpWideNarrow /> : <ArrowDownAZ />;
+                                                                } else if (sorted === 'desc') {
+                                                                    return isNumericHeader ? <ArrowDownWideNarrow /> : <ArrowUpZA />;
+                                                                }
+                                                                return <ArrowUpDown />;
+                                                            })()}
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        {(function () {
+                                                            const sorted = header.column.getIsSorted();
+                                                            if (isNumericHeader) {
+                                                                if (sorted === 'asc') return 'Sorted ascending (click to clear sort)';
+                                                                if (sorted === 'desc') return 'Sorted descending (click to sort ascending)';
+                                                                return 'Unsorted (click to sort descending)';
+                                                            } else {
+                                                                if (sorted === 'asc') return 'Sorted A → Z (click to sort Z → A)';
+                                                                if (sorted === 'desc') return 'Sorted Z → A (click to clear sort)';
+                                                                return 'Unsorted (click to sort A → Z)';
+                                                            }
+                                                        })()}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </div>
                                         </th>
                                     );
                                 })}
