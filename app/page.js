@@ -78,17 +78,266 @@ export default function Home() {
       }
 
       if (lineRef.current) {
+        const threshold = 65;
+        const cpuData = [42, 58, 63, 71, 68, 54, 77, 83, 61];
+        const baseTime = Date.now() - (cpuData.length - 1) * 20000;
+        const timestamps = Array.from({ length: cpuData.length }, (_, i) => baseTime + i * 20000);
+        const dataPoints = cpuData.map((y, i) => ({ x: timestamps[i], y }));
+
+        // Build breach points with dynamic label placement based on available space
+        const categories = timestamps;
+        const computeBreachPoints = (gridHeight = 200, xAxisHeight = 20) => {
+          const labelHeight = 22; // approximate rendered label height
+          const toolbarAvoidPx = 30; // avoid overlapping the chart toolbar at the top
+          const bottomAvoidPx = Math.max(18, xAxisHeight + 8); // avoid x-axis labels at the bottom
+
+          return cpuData
+            .map((value, idx) => {
+              if (value <= threshold) return null;
+
+              // Convert value (0..100) to pixel position from top of plot
+              const normalized = (value - 0) / (100 - 0);
+              const yPxFromTop = gridHeight * (1 - normalized);
+
+              const nearTop = yPxFromTop < toolbarAvoidPx + labelHeight;
+              const nearBottom = yPxFromTop > gridHeight - (bottomAvoidPx + labelHeight);
+
+              const offsetY = nearTop ? 24 : nearBottom ? -18 : 24; // below by default
+
+              return {
+                x: categories[idx],
+                y: value,
+                seriesIndex: 0,
+                marker: {
+                  size: 6,
+                  fillColor: "#EF4444",
+                  strokeColor: "#ffffff",
+                },
+                label: {
+                  text: `${value}%`,
+                  borderColor: "#EF4444",
+                  style: { color: "#ffffff", background: "#EF4444" },
+                  offsetY,
+                },
+              };
+            })
+            .filter(Boolean);
+        };
+
+        const breachLines = cpuData
+          .map((value, idx) => {
+            if (value <= threshold) return null;
+            return {
+              x: timestamps[idx],
+              borderColor: "#EF4444",
+              strokeDashArray: 4,
+              opacity: 0.9,
+            };
+          })
+          .filter(Boolean);
+
+        const computeThresholdLabelPlacement = (w) => {
+          const gridX = w.globals.gridX;
+          const gridWidth = w.globals.gridWidth;
+          const step = categories.length > 1 ? gridWidth / (categories.length - 1) : gridWidth;
+          const labelHeight = 22;
+          const verticalNearPct = 6; // within 6 percentage points of threshold
+          const horizontalBuffer = 120; // px from left/right edges considered collision zones
+
+          let collideLeft = false;
+          let collideRight = false;
+          cpuData.forEach((value, idx) => {
+            if (value <= threshold) return;
+            if (Math.abs(value - threshold) > verticalNearPct) return;
+            const xPx = gridX + idx * step;
+            if (xPx - gridX < horizontalBuffer) collideLeft = true;
+            if (gridX + gridWidth - xPx < horizontalBuffer) collideRight = true;
+          });
+
+          if (collideLeft && !collideRight) return { position: "right", offsetX: 10 };
+          if (collideRight && !collideLeft) return { position: "left", offsetX: -10 };
+          if (collideLeft && collideRight) return { position: "left", offsetX: -10 };
+          return { position: "left", offsetX: -10 };
+        };
+
         const lineOptions = {
           ...baseChart,
-          chart: { ...baseChart.chart, type: "line" },
+          chart: {
+            ...baseChart.chart,
+            type: "line",
+            events: {
+              mounted: (chartCtx) => {
+                const w = chartCtx.w;
+                const pts = computeBreachPoints(w.globals.gridHeight, w.globals.xAxisHeight);
+                const tl = computeThresholdLabelPlacement(w);
+                const yAnn = [
+                  {
+                    y: threshold,
+                    borderColor: "#F59E0B",
+                    label: {
+                      text: `${threshold}%`,
+                      position: tl.position,
+                      offsetX: tl.offsetX,
+                      style: { background: "#F59E0B", color: "#ffffff" },
+                    },
+                  },
+                  {
+                    y: threshold,
+                    y2: 100,
+                    fillColor: "rgba(245, 158, 11, 0.08)",
+                    opacity: 0.1,
+                  },
+                ];
+                chartCtx.updateOptions({ annotations: { points: pts, yaxis: yAnn } }, false, true);
+              },
+              updated: (chartCtx) => {
+                const w = chartCtx.w;
+                const pts = computeBreachPoints(w.globals.gridHeight, w.globals.xAxisHeight);
+                const tl = computeThresholdLabelPlacement(w);
+                const yAnn = [
+                  {
+                    y: threshold,
+                    borderColor: "#F59E0B",
+                    label: {
+                      text: `${threshold}%`,
+                      position: tl.position,
+                      offsetX: tl.offsetX,
+                      style: { background: "#F59E0B", color: "#ffffff" },
+                    },
+                  },
+                  {
+                    y: threshold,
+                    y2: 100,
+                    fillColor: "rgba(245, 158, 11, 0.08)",
+                    opacity: 0.1,
+                  },
+                ];
+                chartCtx.updateOptions({ annotations: { points: pts, yaxis: yAnn } }, false, true);
+              },
+              resized: (chartCtx) => {
+                const w = chartCtx.w;
+                const pts = computeBreachPoints(w.globals.gridHeight, w.globals.xAxisHeight);
+                const tl = computeThresholdLabelPlacement(w);
+                const yAnn = [
+                  {
+                    y: threshold,
+                    borderColor: "#F59E0B",
+                    label: {
+                      text: `${threshold}%`,
+                      position: tl.position,
+                      offsetX: tl.offsetX,
+                      style: { background: "#F59E0B", color: "#ffffff" },
+                    },
+                  },
+                  {
+                    y: threshold,
+                    y2: 100,
+                    fillColor: "rgba(245, 158, 11, 0.08)",
+                    opacity: 0.1,
+                  },
+                ];
+                chartCtx.updateOptions({ annotations: { points: pts, yaxis: yAnn } }, false, true);
+              },
+              zoomed: (chartCtx) => {
+                const w = chartCtx.w;
+                const pts = computeBreachPoints(w.globals.gridHeight, w.globals.xAxisHeight);
+                const tl = computeThresholdLabelPlacement(w);
+                const yAnn = [
+                  {
+                    y: threshold,
+                    borderColor: "#F59E0B",
+                    label: {
+                      text: `${threshold}%`,
+                      position: tl.position,
+                      offsetX: tl.offsetX,
+                      style: { background: "#F59E0B", color: "#ffffff" },
+                    },
+                  },
+                  {
+                    y: threshold,
+                    y2: 100,
+                    fillColor: "rgba(245, 158, 11, 0.08)",
+                    opacity: 0.1,
+                  },
+                ];
+                chartCtx.updateOptions({ annotations: { points: pts, yaxis: yAnn } }, false, true);
+              },
+              beforeResetZoom: (chartCtx) => {
+                const w = chartCtx.w;
+                const pts = computeBreachPoints(w.globals.gridHeight, w.globals.xAxisHeight);
+                const tl = computeThresholdLabelPlacement(w);
+                const yAnn = [
+                  {
+                    y: threshold,
+                    borderColor: "#F59E0B",
+                    label: {
+                      text: `${threshold}%`,
+                      position: tl.position,
+                      offsetX: tl.offsetX,
+                      style: { background: "#F59E0B", color: "#ffffff" },
+                    },
+                  },
+                  {
+                    y: threshold,
+                    y2: 100,
+                    fillColor: "rgba(245, 158, 11, 0.08)",
+                    opacity: 0.1,
+                  },
+                ];
+                chartCtx.updateOptions({ annotations: { points: pts, yaxis: yAnn } }, false, true);
+              },
+            },
+          },
           series: [
             {
-              name: "revenue",
-              data: [20, 35, 30, 55, 52, 65, 80, 95, 130],
+              name: "CPU Utilization (%)",
+              data: dataPoints,
             },
           ],
           dataLabels: { enabled: false, style: baseChart.dataLabels.style },
           stroke: { curve: "smooth", width: 3 },
+          xaxis: {
+            type: "datetime",
+            labels: {
+              style: { fontFamily: "IBM Plex Sans, sans-serif" },
+              datetimeUTC: false,
+              format: "HH:mm:ss",
+            },
+            tickAmount: Math.min(timestamps.length - 1, 8),
+          },
+          yaxis: {
+            ...baseChart.yaxis,
+            min: 0,
+            max: 100,
+            tickAmount: 5,
+            labels: {
+              ...baseChart.yaxis.labels,
+              formatter: (val) => `${Math.round(val)}%`,
+            },
+          },
+          tooltip: { x: { format: "HH:mm:ss" } },
+          annotations: {
+            yaxis: [
+              {
+                y: threshold,
+                borderColor: "#F59E0B",
+                label: {
+                  text: `${threshold}%`,
+                  position: "left",
+                  offsetX: -10,
+                  style: { background: "#F59E0B", color: "#ffffff" },
+                },
+              },
+              {
+                y: threshold,
+                y2: 100,
+                fillColor: "rgba(245, 158, 11, 0.08)",
+                opacity: 0.1,
+              },
+            ],
+            points: computeBreachPoints(),
+            xaxis: breachLines,
+          },
         };
         lineChart = new ApexCharts(lineRef.current, lineOptions);
         lineChart.render();
@@ -152,7 +401,7 @@ export default function Home() {
       </Panel>
       <Panel
         className="col-span-4"
-        title="A Widget Title that's a bit longer"
+        title="CPU Utilization—Breaches"
         description="A description of the widget; can be fairly long, wrapping to multiple lines, if needed."
         externalHref="https://example.com"
         headerHeightClass="h-[37px]"
