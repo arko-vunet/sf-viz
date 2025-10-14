@@ -53,11 +53,11 @@ html {
   right: var(--gutter);
   background-image:
     linear-gradient(to right,
-      rgba(233, 245, 253, 0.25) 0,
-      rgba(233, 245, 253, 0.25) calc(100% - var(--gutter)),
+      rgba(233, 245, 253, 0.3) 0,
+      rgba(233, 245, 253, 0.3) calc(100% - var(--gutter)),
       transparent calc(100% - var(--gutter)),
       transparent 100%),
-    linear-gradient(to right, rgba(233, 245, 253, 0.25), rgba(233, 245, 253, 0.25));
+    linear-gradient(to right, rgba(233, 245, 253, 0.3), rgba(233, 245, 253, 0.3));
   background-size:
     calc(var(--col) + var(--gutter)) 100%,
     var(--col) 100%;
