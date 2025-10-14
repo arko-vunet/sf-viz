@@ -70,6 +70,11 @@ html {
   pointer-events: none;
 }
 
+/* Hide only the decorative stripes, keep the grid layout working */
+.grid-ctr.no-stripes::before {
+  content: none;
+}
+
 /* tablets: 8 columns */
 @media (min-width: 768px) {
   .grid-ctr {
@@ -286,4 +291,33 @@ html {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Filter pill styles (checked/unchecked/disabled with hover/active overlays) */
+.filter-pill {
+  /* fallbacks for custom CSS variables */
+  --fp-bg: var(--color-background-primary, #fff);
+  --fp-applied: linear-gradient(transparent, transparent);
+  --fp-hover: var(--color-action-hover, rgba(36, 41, 46, 0.12));
+  --fp-selected: var(--color-action-selected, rgba(36, 41, 46, 0.08));
+  --fp-applied-color: var(--color-filter-pill-applied, rgba(56, 113, 220, 0.15));
+  background-color: var(--fp-bg);
+  background-image: var(--fp-applied);
+}
+
+.filter-pill[data-state="checked"] {
+  --fp-applied: linear-gradient(var(--fp-applied-color), var(--fp-applied-color));
+}
+
+.filter-pill:hover {
+  background-image:
+    linear-gradient(var(--fp-hover), var(--fp-hover)),
+    var(--fp-applied);
+}
+
+.filter-pill:active,
+.filter-pill[data-state="pressed"] {
+  background-image:
+    linear-gradient(var(--fp-selected), var(--fp-selected)),
+    var(--fp-applied);
 }

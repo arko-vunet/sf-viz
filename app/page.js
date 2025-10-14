@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Panel from "@/components/Panel";
 import TableWidget from "@/components/TableWidget";
+import { FilterPill } from "@/components/ui/filter-pill";
 
 export default function Home() {
   const columnRef = useRef(null);
@@ -10,6 +11,7 @@ export default function Home() {
   const lineRef = useRef(null);
   const lineLabelsRef = useRef(null);
   const multiLineRef = useRef(null);
+  const [pillChecked, setPillChecked] = useState(true);
 
   useEffect(() => {
     let columnChart;
@@ -410,7 +412,12 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="grid-ctr font-sans">
+    <div className={`grid-ctr font-sans ${pillChecked ? "" : "no-stripes"}`}>
+      <div className="col-span-full pb-1">
+        <FilterPill checked={pillChecked} onCheckedChange={setPillChecked} aria-label="Toggle grid stripes">
+          Grids
+        </FilterPill>
+      </div>
       <div className="col-span-4 lg:col-span-6">
         <TableWidget
           title="Resource Utilization"
