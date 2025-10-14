@@ -214,6 +214,15 @@ function StatusBadge({ status }) {
     );
 }
 
+// Convert a ReactNode (including JSX) into plain text for subtitle display
+function nodeToText(node) {
+    if (node == null || node === false || node === true) return "";
+    if (typeof node === "string" || typeof node === "number") return String(node);
+    if (Array.isArray(node)) return node.map(nodeToText).join("");
+    if (React.isValidElement(node)) return nodeToText(node.props?.children);
+    return "";
+}
+
 const defaultColumns = [
     columnHelper.accessor("service", {
         header: () => "Service",
@@ -287,8 +296,13 @@ export default function TableWidget({
     data = defaultData,
     columns = defaultColumns,
     externalHref,
+    subtitleEmphasisClassName = "text-gray-700 font-medium",
+    // Back-compat: if provided, these will be ignored in favor of subtitleEmphasisClassName
+    subtitleValueClassName,
+    subtitleDirClassName,
 }) {
-    const [sorting, setSorting] = useState([]);
+    // Default sort: uptimePct descending
+    const [sorting, setSorting] = useState([{ id: "uptimePct", desc: true }]);
 
     const table = useReactTable({
         data,
@@ -299,8 +313,74 @@ export default function TableWidget({
         getSortedRowModel: getSortedRowModel(),
     });
 
+    // Build subtitle from current sorting state
+    const subtitle = (function () {
+        const emphCls = subtitleEmphasisClassName ?? subtitleValueClassName ?? subtitleDirClassName ?? "text-gray-800 font-semibold underline";
+        if (!Array.isArray(sorting) || sorting.length === 0) {
+            return (
+                <span>
+                    Table sorted by <span className={emphCls}>default order</span>
+                </span>
+            );
+        }
+        const s = sorting[0];
+        if (!s?.id) return undefined;
+
+        // Force header instances creation and build id->label map
+        let headerText = s.id;
+        try {
+            const groups = table.getHeaderGroups();
+            const idToText = new Map();
+            groups.forEach(g => {
+                g.headers.forEach(h => {
+                    if (h.isPlaceholder) return;
+                    try {
+                        const node = flexRender(h.column.columnDef.header, h.getContext());
+                        const txt = nodeToText(node).trim();
+                        if (txt) idToText.set(h.column.id, txt);
+                    } catch (_) { /* ignore */ }
+                });
+            });
+            if (idToText.has(s.id)) headerText = idToText.get(s.id);
+        } catch (_) { /* ignore */ }
+
+        // Fallback: render from column def directly
+        if (headerText === s.id) {
+            const col = table.getAllLeafColumns().find(c => c.id === s.id);
+            if (col?.columnDef?.header !== undefined) {
+                try {
+                    const rendered = typeof col.columnDef.header === 'string' ? col.columnDef.header : flexRender(col.columnDef.header, { column: col, table });
+                    const txt = nodeToText(rendered).trim();
+                    if (txt) headerText = txt;
+                } catch (_) { /* ignore */ }
+            }
+        }
+
+        // Extra fallback: look up header from original columns prop
+        if (headerText === s.id) {
+            try {
+                const defs = Array.isArray(columns) ? columns : [];
+                const def = defs.find(d => (d?.id ?? d?.accessorKey) === s.id);
+                if (def?.header !== undefined) {
+                    const rendered = typeof def.header === 'string'
+                        ? def.header
+                        : (typeof def.header === 'function' ? def.header({ column: table.getColumn(s.id), table }) : def.header);
+                    const txt = nodeToText(rendered).trim();
+                    if (txt) headerText = txt;
+                }
+            } catch (_) { /* ignore */ }
+        }
+
+        const dir = s.desc ? 'descending' : 'ascending';
+        return (
+            <span>
+                Table sorted by <span className={emphCls}>{headerText}</span> in <span className={emphCls}>{dir}</span> order
+            </span>
+        );
+    })();
+
     return (
-        <Panel className="h-full" title={title} description={description} externalHref={externalHref} headerHeightClass="h-[37px]" contentClassName="p-0">
+        <Panel className="h-full" title={title} description={description} externalHref={externalHref} subtitle={subtitle} headerHeightClass="min-h-[52px]" contentClassName="p-0">
             <div className="overflow-x-auto overflow-y-auto max-h-80">
                 <table className="w-full text-sm min-w-max">
                     <thead>
