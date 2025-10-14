@@ -413,7 +413,7 @@ export default function Home() {
     <div className="grid-ctr font-sans">
       <div className="col-span-4 lg:col-span-6">
         <TableWidget
-          title="Users"
+          title="Resource Utilization"
           description="Example table powered by TanStack React Table."
           externalHref="https://tanstack.com/table/latest"
         />
