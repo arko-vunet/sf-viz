@@ -4,7 +4,8 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info, SquareArrowOutUpRight } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Info, MoreHorizontal } from "lucide-react";
 
 function Panel({
     title,
@@ -17,8 +18,14 @@ function Panel({
     actions,
     headerHeightClass = "h-[37px]",
     titleClassName,
-  contentClassName,
+    contentClassName,
+    menuItems = [],
+    menuLabel,
 }) {
+    const normalizedMenuItems = (Array.isArray(menuItems) ? menuItems : []).filter(Boolean);
+    const derivedItems = normalizedMenuItems.length > 0 ? normalizedMenuItems : (externalHref ? [{ label: "Open link", href: externalHref }] : []);
+    const items = derivedItems.slice(0, 5);
+
     return (
         <div className={cn("widget rounded-md shadow-sm/3 bg-white border border-gray-300 bg-white flex flex-col", className)}>
             <div className={cn("flex flex-row gap-2 pl-2 pr-0.5 py-0.5 border-b border-gray-300 items-center justify-between", headerHeightClass)}>
@@ -43,19 +50,27 @@ function Panel({
                 <div className="flex items-center gap-1">
                     {actions}
                     {showExternalLink ? (
-                        externalHref ? (
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <a href={externalHref} target="_blank" rel="noreferrer">
-                                        <Button variant="ghost" size="icon-sm" className="cursor-pointer text-blue-600 hover:text-blue-900">
-                                            <SquareArrowOutUpRight />
-                                        </Button>
-                                    </a>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>External link</p>
-                                </TooltipContent>
-                            </Tooltip>
+                        items.length ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon-sm" className="cursor-pointer" aria-label="Open menu">
+                                        <MoreHorizontal />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    {menuLabel ? (
+                                        <>
+                                            <DropdownMenuLabel>{menuLabel}</DropdownMenuLabel>
+                                            <DropdownMenuSeparator />
+                                        </>
+                                    ) : null}
+                                    {items.map((item, idx) => (
+                                        <DropdownMenuItem key={`${item.href}-${idx}`} asChild>
+                                            <a href={item.href} target="_blank" rel="noopener noreferrer">{item.label}</a>
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         ) : (
                             <div />
                         )
@@ -63,7 +78,7 @@ function Panel({
                 </div>
             </div>
 
-	  <div className={cn("flex-1 min-h-0 p-2 pt-0", contentClassName)}>{children}</div>
+            <div className={cn("flex-1 min-h-0 p-2 pt-0", contentClassName)}>{children}</div>
         </div>
     );
 }
