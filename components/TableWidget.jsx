@@ -315,7 +315,7 @@ export default function TableWidget({
 
     // Build subtitle from current sorting state
     const subtitle = (function () {
-        const emphCls = subtitleEmphasisClassName ?? subtitleValueClassName ?? subtitleDirClassName ?? "text-gray-800 font-semibold underline";
+        const emphCls = subtitleEmphasisClassName ?? subtitleValueClassName ?? subtitleDirClassName ?? "text-red-400 font-bold underline";
         if (!Array.isArray(sorting) || sorting.length === 0) {
             return (
                 <span>

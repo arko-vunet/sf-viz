@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Info, MoreHorizontal } from "lucide-react";
+import { DEFAULT_PANEL_HEIGHT } from "@/lib/bento-grid";
 
 function Panel({
     title,
@@ -22,13 +23,31 @@ function Panel({
     contentClassName,
     menuItems = [],
     menuLabel,
+    minHeight,
+    maxHeight,
+    height,
 }) {
     const normalizedMenuItems = (Array.isArray(menuItems) ? menuItems : []).filter(Boolean);
     const derivedItems = normalizedMenuItems.length > 0 ? normalizedMenuItems : (externalHref ? [{ label: "Open link", href: externalHref }] : []);
     const items = derivedItems.slice(0, 5);
 
+    // Determine the height for the panel
+    const getPanelHeight = () => {
+        if (height) return height;
+        if (minHeight) return minHeight;
+        return DEFAULT_PANEL_HEIGHT; // Default to 384px as requested
+    };
+
+    const panelHeight = getPanelHeight();
+
     return (
-        <div className={cn("widget rounded-md shadow-sm/3 bg-white border border-gray-300 bg-white flex flex-col", className)}>
+        <div
+            className={cn("widget rounded-md shadow-sm/3 bg-white border border-gray-300 bg-white flex flex-col", className)}
+            style={{
+                minHeight: panelHeight,
+                ...(maxHeight && { maxHeight })
+            }}
+        >
             <div className={cn(
                 "flex flex-col gap-0 pl-2 pr-0.5 pt-0.5 border-b border-gray-300",
                 subtitle ? "pb-2.5" : "pb-0.5 justify-center",
