@@ -114,6 +114,92 @@ const generatedData = Array.from({ length: 40 }, (_, i) => {
 
 const defaultData = [...seedData, ...generatedData];
 
+function PercentCell({ value, redThreshold, amberThreshold, neutral = false, textClass = "" }) {
+    const v = Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0));
+    const barColor = neutral
+        ? "bg-gray-400"
+        : v >= redThreshold
+            ? "bg-rose-400"
+            : v >= amberThreshold
+                ? "bg-amber-400"
+                : "bg-gray-400";
+    return (
+        <div className="flex items-center gap-2 w-full">
+            <div className="relative h-1.5 shrink-0 w-8 md:w-12 rounded bg-gray-200">
+                <div className={`absolute inset-y-0 left-0 rounded ${barColor}`} style={{ width: `${v}%` }} />
+            </div>
+            <span className={`ml-auto tabular-nums ${textClass}`}>{Number.isFinite(value) ? value : ""}</span>
+        </div>
+    );
+}
+
+function Sparkline({ data, height = 14, color = "#9CA3AF", strokeWidth = 1.25 }) {
+    const n = Array.isArray(data) ? data.length : 0;
+    if (n < 2) {
+        return <svg className="w-full" viewBox={`0 0 100 ${height}`} preserveAspectRatio="none" />;
+    }
+    const stepX = 100 / (n - 1);
+    const clamp01 = v => Math.max(0, Math.min(1, v));
+    const y = v => (height - height * clamp01(v / 100));
+    let d = `M 0 ${y(data[0])}`;
+    for (let i = 1; i < n; i++) {
+        d += ` L ${i * stepX} ${y(data[i])}`;
+    }
+    return (
+        <svg className="w-full h-3" viewBox={`0 0 100 ${height}`} preserveAspectRatio="none">
+            <path d={d} fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
+function hashStringToInt(str) {
+    let h = 2166136261 >>> 0; // FNV-like
+    for (let i = 0; i < String(str).length; i++) {
+        h ^= String(str).charCodeAt(i);
+        h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+}
+
+function mulberry32(seed) {
+    return function () {
+        let t = (seed += 0x6D2B79F5);
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+function generateUptimeSeries(seedKey, lastValue, length = 24) {
+    const seed = hashStringToInt(seedKey ?? "seed");
+    const rnd = mulberry32(seed);
+    const series = [];
+    const base = Math.max(90, Math.min(100, Number.isFinite(lastValue) ? lastValue : 99));
+    let val = base - 0.5 + (rnd() - 0.5) * 1.0;
+    for (let i = 0; i < length - 1; i++) {
+        const drift = (rnd() - 0.5) * 0.8; // gentle variation
+        const revert = (base - val) * 0.12; // mean reversion
+        val = Math.max(90, Math.min(100, val + drift + revert));
+        // occasional small dip
+        if (rnd() < 0.08) {
+            val = Math.max(92, val - (1.5 + rnd() * 1.5));
+        }
+        series.push(Number(val.toFixed(2)));
+    }
+    series.push(Number(Math.max(0, Math.min(100, base)).toFixed(2))); // end at lastValue
+    return series;
+}
+
+function UptimeSparklineCell({ value, seedKey, textClass = "" }) {
+    const series = generateUptimeSeries(seedKey, value, 24);
+    return (
+        <div className="flex items-center gap-2 w-full">
+            <div className="shrink-0 w-16"><Sparkline data={series} /></div>
+            <span className={`ml-auto tabular-nums ${textClass}`}>{Number.isFinite(value) ? value : ""}</span>
+        </div>
+    );
+}
+
 function StatusBadge({ status }) {
     const colorClass =
         status === "Healthy"
@@ -150,7 +236,7 @@ const defaultColumns = [
         cell: info => {
             const v = info.getValue();
             const cls = v >= 85 ? "font-semibold text-rose-700" : v >= 65 ? "font-semibold text-amber-700" : "";
-            return <span className={`tabular-nums ${cls}`}>{v}</span>;
+            return <PercentCell value={v} redThreshold={85} amberThreshold={65} textClass={cls} />;
         },
     }),
     columnHelper.accessor("memPct", {
@@ -158,7 +244,7 @@ const defaultColumns = [
         cell: info => {
             const v = info.getValue();
             const cls = v >= 85 ? "font-semibold text-rose-700" : v >= 65 ? "font-semibold text-amber-700" : "";
-            return <span className={`tabular-nums ${cls}`}>{v}</span>;
+            return <PercentCell value={v} redThreshold={85} amberThreshold={65} textClass={cls} />;
         },
     }),
     columnHelper.accessor("diskPct", {
@@ -166,7 +252,7 @@ const defaultColumns = [
         cell: info => {
             const v = info.getValue();
             const cls = v >= 85 ? "font-semibold text-rose-700" : v >= 65 ? "font-semibold text-amber-700" : "";
-            return <span className={`tabular-nums ${cls}`}>{v}</span>;
+            return <PercentCell value={v} redThreshold={85} amberThreshold={65} textClass={cls} />;
         },
     }),
     columnHelper.accessor("p95Ms", {
@@ -182,12 +268,16 @@ const defaultColumns = [
         cell: info => {
             const v = info.getValue();
             const cls = v >= 5 ? "font-semibold text-rose-700" : v >= 1 ? "font-semibold text-amber-700" : "";
-            return <span className={`tabular-nums ${cls}`}>{v}</span>;
+            return <PercentCell value={v} redThreshold={5} amberThreshold={1} textClass={cls} />;
         },
     }),
     columnHelper.accessor("uptimePct", {
         header: () => "Uptime (%)",
-        cell: info => <span className="tabular-nums">{info.getValue()}</span>,
+        cell: info => {
+            const v = info.getValue();
+            const seedKey = info.row?.original?.id ?? info.row?.id ?? "row";
+            return <UptimeSparklineCell value={v} seedKey={seedKey} />;
+        },
     }),
 ];
 
