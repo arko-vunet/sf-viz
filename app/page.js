@@ -63,7 +63,7 @@ export default function Home() {
         <MultiLineChart />
       </Panel>
       <Panel
-        className="col-span-3"
+        className="col-span-2"
         title="Conversion Rate"
         description="Current conversion rate with historical comparison"
         externalHref="https://example.com"
@@ -84,6 +84,104 @@ export default function Home() {
           }}
         />
       </Panel>
+      <Panel
+        className="col-span-2"
+        title="Conversion Rate"
+        description="Current conversion rate with historical comparison"
+        externalHref="https://example.com"
+        headerHeightClass="h-[37px]"
+      >
+        <BMV
+          value="24.87%"
+          label=""
+          historicalData={[
+            { label: "Yesterday", value: "32.45%" },
+            { label: "2 days ago", value: "62.45%" },
+            { label: "3 days ago", value: "24.83%" }
+          ]}
+          thresholds={{
+            good: 60,
+            warning: 30,
+            critical: 15
+          }}
+        />
+      </Panel>
+
+      {/* BMV Panel Group - spans 4 columns total */}
+      <div className="col-span-4 grid grid-cols-2 gap-2">
+        <Panel
+          title="Revenue Growth"
+          description="Monthly revenue growth percentage"
+          externalHref="https://example.com"
+          headerHeightClass="h-[37px]"
+          minHeight={180}
+        >
+          <BMV
+            value="12.5%"
+            label=""
+            showHistorical={false}
+            thresholds={{
+              good: 10,
+              warning: 5,
+              critical: 0
+            }}
+          />
+        </Panel>
+        <Panel
+          title="User Engagement"
+          description="Daily active users percentage"
+          externalHref="https://example.com"
+          headerHeightClass="h-[37px]"
+          minHeight={180}
+        >
+          <BMV
+            value="68.3%"
+            label=""
+            showHistorical={false}
+            thresholds={{
+              good: 70,
+              warning: 50,
+              critical: 30
+            }}
+          />
+        </Panel>
+        <Panel
+          title="Conversion Rate"
+          description="Website conversion rate"
+          externalHref="https://example.com"
+          headerHeightClass="h-[37px]"
+          minHeight={180}
+        >
+          <BMV
+            value="3.2%"
+            label=""
+            showHistorical={false}
+            thresholds={{
+              good: 5,
+              warning: 2,
+              critical: 1
+            }}
+          />
+        </Panel>
+        <Panel
+          title="Customer Satisfaction"
+          description="NPS score percentage"
+          externalHref="https://example.com"
+          headerHeightClass="h-[37px]"
+          minHeight={180}
+        >
+          <BMV
+            value="84.7%"
+            label=""
+            showHistorical={false}
+            thresholds={{
+              good: 80,
+              warning: 60,
+              critical: 40
+            }}
+          />
+        </Panel>
+      </div>
     </div>
   );
 }
