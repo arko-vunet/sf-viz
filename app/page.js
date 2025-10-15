@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Panel from "@/components/Panel";
 import TableWidget from "@/components/TableWidget";
+import BMV from "@/components/BMV";
 import { FilterPill } from "@/components/ui/filter-pill";
 import ColumnChart from "@/components/charts/ColumnChart";
 import PieChart from "@/components/charts/PieChart";
@@ -60,6 +61,28 @@ export default function Home() {
         headerHeightClass="h-[37px]"
       >
         <MultiLineChart />
+      </Panel>
+      <Panel
+        className="col-span-3"
+        title="Conversion Rate"
+        description="Current conversion rate with historical comparison"
+        externalHref="https://example.com"
+        headerHeightClass="h-[37px]"
+      >
+        <BMV
+          value="24.87%"
+          label=""
+          historicalData={[
+            { label: "Yesterday", value: "32.45%" },
+            { label: "2 days ago", value: "62.45%" },
+            { label: "3 days ago", value: "24.83%" }
+          ]}
+          thresholds={{
+            good: 60,
+            warning: 30,
+            critical: 15
+          }}
+        />
       </Panel>
     </div>
   );
