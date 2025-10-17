@@ -176,6 +176,35 @@ html {
   margin-left: 0px;
 }
 
+/* Visible resize handles for react-grid-layout */
+.react-resizable-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  right: 2px;
+  bottom: 2px;
+  background: linear-gradient(135deg, transparent 0 40%, #c9cdd3 40% 60%, transparent 60% 100%);
+  border-radius: 2px;
+  opacity: 0.7;
+  cursor: se-resize;
+}
+.react-resizable-handle:hover {
+  opacity: 1;
+}
+
+/* Draggable header cursor states */
+.panel-drag-handle {
+  cursor: grab;
+}
+.react-grid-item.react-draggable-dragging .panel-drag-handle {
+  cursor: grabbing;
+}
+.panel-drag-handle .no-drag,
+.panel-drag-handle button,
+.panel-drag-handle a {
+  cursor: pointer;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

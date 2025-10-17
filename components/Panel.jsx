@@ -45,11 +45,12 @@ function Panel({
             className={cn("widget rounded-md shadow-sm/3 bg-white border border-gray-300 bg-white flex flex-col", className)}
             style={{
                 minHeight: panelHeight,
+                height: "100%",
                 ...(maxHeight && { maxHeight })
             }}
         >
             <div className={cn(
-                "flex flex-col gap-0 pl-2 pr-0.5 pt-0.5 border-b border-gray-300",
+                "panel-drag-handle flex flex-col gap-0 pl-2 pr-0.5 pt-0.5 border-b border-gray-300",
                 subtitle ? "pb-2.5" : "pb-0.5 justify-center",
                 headerHeightClass
             )}>
@@ -79,7 +80,7 @@ function Panel({
                             items.length ? (
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon-sm" className="cursor-pointer" aria-label="Open menu">
+                                        <Button variant="ghost" size="icon-sm" className="cursor-pointer no-drag" aria-label="Open menu">
                                             <MoreHorizontal />
                                         </Button>
                                     </DropdownMenuTrigger>
