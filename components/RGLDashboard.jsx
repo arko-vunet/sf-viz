@@ -102,8 +102,8 @@ function RGLDashboard() {
             isDraggable
             draggableHandle=".panel-drag-handle"
             draggableCancel=".no-drag, .apexcharts-toolbar, .apexcharts-tooltip, .apexcharts-menu"
-            compactType="vertical"
-            preventCollision={false}
+      compactType="vertical"
+      preventCollision={false}
             onResizeStop={handleResizeStop}
         >
             <div key="table" style={{ height: "100%" }}>
